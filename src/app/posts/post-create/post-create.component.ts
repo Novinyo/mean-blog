@@ -48,7 +48,8 @@ export class PostCreateComponent implements OnInit {
             id: data._id,
             title: data.title, 
             content: data.content,
-            imagePath: data.imagePath
+            imagePath: data.imagePath,
+            creator: data.creator
           };
           
 
@@ -77,7 +78,8 @@ export class PostCreateComponent implements OnInit {
       id: null,
       title: this.form.value.title,
       content: this.form.value.content,
-      imagePath: this.form.value.image
+      imagePath: this.form.value.image,
+      creator: null
     };
     
     if (this.mode === 'create') {

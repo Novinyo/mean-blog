@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 
 const Post = require('../models/post');
+const checkAuth = require('../middleware/check-auth');
 
 const router = express.Router();
 
@@ -31,16 +32,17 @@ const storage = multer.diskStorage({
 let limits = {fileSize: 2 * 1024 * 1024};
 
 // Create a new Post
-router.post('', multer({'storage': storage, limits})
+router.post('', checkAuth, multer({'storage': storage, limits})
     .single('image'),(req, res, next) => {
 
     const url = req.protocol + '://' + req.get('host');
     const post = new Post({
         title: req.body.title,
         content: req.body.content,
-        imagePath: url + '/images/' + req.file.filename
+        imagePath: url + '/images/' + req.file.filename,
+        creator: req.userData.userId
     });
-    
+
      post.save().then(result => {
          res.status(201).json({
              message: 'Post added successfully',
@@ -52,7 +54,8 @@ router.post('', multer({'storage': storage, limits})
      });
 });
 //update a post
-router.put('/:id',multer({'storage': storage, limits})
+router.put('/:id', checkAuth,
+ multer({'storage': storage, limits})
 .single('image'), (req, res, next) => {
     let imagePath = req.body.imagePath;
     if(req.file) {
@@ -64,13 +67,17 @@ router.put('/:id',multer({'storage': storage, limits})
         _id: req.body.id,
         title: req.body.title,
         content: req.body.content,
-        imagePath: imagePath
+        imagePath: imagePath,
+        creator: req.userData.userId
     });
 
-    Post.updateOne({_id: req.params.id}, post)
+    Post.updateOne({_id: req.params.id, creator: req.userData.userId}, post)
     .then(result => {
-        res.status(200).json({message: 'Update successful'});
-        
+        if(result.nModified > 0)
+            res.status(200).json({message: 'Update successful'});
+        else 
+            res.status(401)
+            .json({message: 'You are not authorized to modify this record'});
     });
 })
 // get all posts
@@ -112,11 +119,15 @@ router.get('/:id',(req, res, next) => {
 });
 
 // delete a post
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', checkAuth, (req, res, next) => {
     
-    Post.deleteOne({_id: req.params.id})
-    .then(result => {        
-        res.status(200).json({message: 'Post deleted'});
+    Post.deleteOne({_id: req.params.id, creator: req.userData.userId})
+    .then(result => {  
+        if(result.n > 0)      
+            res.status(200).json({message: 'Post deleted'});
+            else 
+            res.status(401)
+            .json({message: 'You are not authorized to delete this record'});
     });
     
 });
