@@ -1,42 +1,49 @@
 <mat-card>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
-    <form *ngIf="!isLoading" (submit)="onSignup(signupForm)" #signupForm="ngForm">
+    <form *ngIf="!isLoading" (submit)="onSignup()" [formGroup]="form">
         <mat-form-field>
             <input matInput
                 type="email" 
-                name="email"
-                ngModel 
-                #emailInput="ngModel"
-                required 
+                formControlName ="email"
                 placeholder="Email address">
-            <mat-error *ngIf="!emailInput.valid">Please enter a valid email</mat-error>
+            <mat-error *ngIf="email.touched && !email.valid">
+                <div *ngIf="email.errors.required">Email address is required</div>
+                <div *ngIf="email.errors.pattern">Please provide a valid email address</div>
+                <div *ngIf="email.errors.emailExists">Email address already taken</div>
+            </mat-error>
         </mat-form-field>
         <mat-form-field>
             <input matInput
                 type="password"  
                 placeholder="Password"
-                name="password" 
-                ngModel 
-                #passwordInput="ngModel" 
-                required
+                formControlName ="password"
                 >
-            <mat-error *ngIf="!passwordInput.valid">Please enter a valid password</mat-error>
+            <mat-error *ngIf="password.touched && !password.valid">
+                <div *ngIf="password.errors.required">Please password is required</div>
+                <div *ngIf="password.errors.minlength">Password must be at least {{password.errors.minlength.requiredLength}} characters</div>
+                <div *ngIf="password.errors.maxlength">Password must not be greater than {{password.errors.maxlength.requiredLength}} characters</div>
+                <div *ngIf="password.errors.passError">Password cannot contain space</div>
+            </mat-error>
         </mat-form-field>
         <mat-form-field>
             <input matInput
                 type="password"  
                 placeholder="Repeat Password"
-                name="confirmPassword" 
-                ngModel 
-                #confirmPasswordInput="ngModel" 
-                required
+                formControlName ="confPassword"
                 >
-                <mat-error *ngIf="!confirmPasswordInput.valid">Please enter a valid password</mat-error>
+            <mat-error *ngIf="confPassword.touched && !confPassword.valid">
+                    <div *ngIf="confPassword.errors.required">
+                        Please confirm password is required
+                    </div>
+            </mat-error>
         </mat-form-field>
+        <mat-error *ngIf="confPassword.valid && form.invalid && form.errors.passwordmatch">
+                Password do not match
+            </mat-error>
         <button mat-raised-button
             color="accent"
              type="submit" 
-             [disabled]="!signupForm.valid || isLoading">Register</button>
+             [disabled]="!form.valid || isLoading">Register</button>
     </form>
 </mat-card>
   

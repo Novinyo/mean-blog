@@ -1,0 +1,7 @@
+{
+    "env": {
+        "MG_LB_USR":"leo",
+        "MG_LB_PWD": "leonard_05",
+        "JWT_KEY":"komi_kouma_game_seva_fia_deka"
+    }
+}

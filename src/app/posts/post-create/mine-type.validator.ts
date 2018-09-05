@@ -15,7 +15,7 @@ export const mimeType = (control: AbstractControl):
         
         fileReader.addEventListener('loadend', () => {
            
-            const arr = new Uint8Array(fileReader.result).subarray(0, 4);
+            const arr = new Uint8Array(fileReader.result as any).subarray(0, 4);
             let header = "";
             let isValid = false;
 

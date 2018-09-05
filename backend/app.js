@@ -10,7 +10,9 @@ const userRoutes = require('./routes/user');
 // chunnQCGlavBQdSI  --MongoDb user leonard
 const app = express();
 
-mongoose.connect('mongodb://127.0.0.1/node_angular')
+//mongoose.connect('mongodb://127.0.0.1/node_angular')
+
+mongoose.connect(`mongodb://${process.env.MG_LB_USR}:${process.env.MG_LB_PWD}@ds022408.mlab.com:22408/mean_blog`)
 .then(() => {
     console.log('Connected to database');
 })

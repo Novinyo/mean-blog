@@ -3,7 +3,9 @@ import { AuthData } from '../models/auth-data';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
+const BACKEND_URL = `${environment.apiUrl}auth`;
 @Injectable({
     providedIn: 'root'
 })
@@ -32,17 +34,26 @@ export class AuthService {
         return this.authStatusListener.asObservable();
     }
 
+    checkEmail(email: string) {
+        let mail = {
+            'email': email
+        };
+        return this.http.post<{message: string}>(`${BACKEND_URL}/checkmail`, mail).toPromise();
+    }
+
     createUser(user: AuthData) {
-        this.http.post("http://localhost:3000/api/auth/signup", user)
+        this.http.post(`${BACKEND_URL}/signup`, user)
         .subscribe(response => {
-            this.router.navigate(['/login']);
+            this.router.navigate(['auth/login']);
+        }, err => {
+            this.authStatusListener.next(false);
         });
     }
 
     login(user: AuthData) {
         this.http.post<{token: string,
              expiresIn: number, userId: string}>
-             ('http://localhost:3000/api/auth/login', user)
+             (`${BACKEND_URL}/login`, user)
         .subscribe(response => {
             const token = response.token;
             
@@ -60,8 +71,7 @@ export class AuthService {
             }
             
         }, err => {
-            console.log(err)
-            //this.router.navigate(['/login'])
+            this.authStatusListener.next(false);
         });
     }
 

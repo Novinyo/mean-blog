@@ -68,6 +68,8 @@ export class PostListComponent implements OnInit, OnDestroy {
       this._postService
       .getPosts(this.postsPerPage,
          this.currentPage);
+    }, () => {
+      this.isLoading = false;
     });
   }
 

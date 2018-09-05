@@ -5,21 +5,25 @@
             <input matInput
                 type="email" 
                 name="email"
-                ngModel 
+                ngModel email
                 #emailInput="ngModel"
+                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,7}$"
                 required 
                 placeholder="Email address">
-            <mat-error *ngIf="!emailInput.valid">Please enter a valid email</mat-error>
+            <mat-error *ngIf="emailInput.touched && !emailInput.valid">
+                <div *ngIf="emailInput.errors.required">Email address is required</div>
+                <div *ngIf="emailInput.errors.pattern">Please provide a valid email address</div>
+            </mat-error>
           </mat-form-field>
           <mat-form-field>
                 <input matInput
                 type="password"  
                 placeholder="Password"
-                name="password" 
+                name="password"
                 ngModel 
                 #passwordInput="ngModel" 
                 required>
-                <mat-error *ngIf="!passwordInput.valid">Please enter a valid password</mat-error>
+                <mat-error *ngIf="passwordInput.touched && !passwordInput.valid">Please enter a valid password</mat-error>
             </mat-form-field>
             <button mat-raised-button
             color="accent"
